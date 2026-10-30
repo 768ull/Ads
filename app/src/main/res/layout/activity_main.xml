@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/fundo"
+    android:keepScreenOn="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/txtTitulo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="28dp"
+            android:text="@string/titulo"
+            android:textColor="@color/amarelo"
+            android:textSize="36sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtSubtitulo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txtTitulo"
+            android:layout_centerHorizontal="true"
+            android:text="@string/subtitulo"
+            android:textColor="#B3FFFFFF"
+            android:textSize="14sp" />
+
+        <LinearLayout
+            android:id="@+id/areaCentral"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/btnVerAnuncio"
+                android:layout_width="230dp"
+                android:layout_height="230dp"
+                android:background="@drawable/btn_circulo"
+                android:text="@string/ver_anuncio"
+                android:textColor="@color/amarelo"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnCategorias"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:background="@drawable/btn_retangulo"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:text="@string/btn_categorias"
+                android:textColor="@color/amarelo"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/banner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            ads:adSize="BANNER"
+            ads:adUnitId="ca-app-pub-3940256099942544/6300978111" />
+        <!-- Acima: substitua pelo ID da SUA unidade de banner no AdMob. -->
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/swPopups"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/banner"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="12dp"
+            android:checked="true"
+            android:text="@string/popups_automaticos"
+            android:textColor="#B3FFFFFF" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#E6120404"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/txtProximo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="@string/carregando"
+            android:textColor="@color/amarelo"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnSair"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txtProximo"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="36dp"
+            android:background="@drawable/btn_retangulo"
+            android:paddingStart="28dp"
+            android:paddingEnd="28dp"
+            android:text="@string/sair_dos_anuncios"
+            android:textColor="@color/amarelo"
+            android:textStyle="bold" />
+    </RelativeLayout>
+</FrameLayout>

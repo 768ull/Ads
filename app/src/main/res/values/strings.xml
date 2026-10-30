@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Game Ads</string>
+    <string name="titulo">GAME ADS</string>
+    <string name="subtitulo">Anúncios de jogos da Google Play</string>
+    <string name="ver_anuncio">VER ANÚNCIO</string>
+    <string name="btn_categorias">CATEGORIAS</string>
+    <string name="popups_automaticos">Pop-ups automáticos</string>
+    <string name="carregando">Carregando anúncio…</string>
+    <string name="proximo_anuncio">Próximo anúncio em %1$d s…</string>
+    <string name="sair_dos_anuncios">SAIR DOS ANÚNCIOS</string>
+    <string name="categoria_titulo">Categoria de anúncios</string>
+</resources>

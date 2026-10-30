@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="fundo">#120404</color>
+    <color name="vermelho">#D32F2F</color>
+    <color name="amarelo">#FFD600</color>
+    <color name="vermelho_icone">#E53935</color>
+</resources>
