@@ -5,11 +5,30 @@
     <string name="subtitulo">Anúncios de jogos da Google Play</string>
     <string name="ver_anuncio">VER ANÚNCIO</string>
     <string name="btn_categorias">CATEGORIAS</string>
+    <string name="diag_botao">DIAGNÓSTICO</string>
     <string name="popups_automaticos">Pop-ups automáticos</string>
     <string name="carregando">Carregando anúncio…</string>
     <string name="proximo_anuncio">Próximo anúncio em %1$d s…</string>
     <string name="sair_dos_anuncios">SAIR DOS ANÚNCIOS</string>
     <string name="categoria_titulo">Categoria de anúncios</string>
+
+    <!-- Diagnóstico -->
+    <string name="diag_titulo">Diagnóstico dos anúncios</string>
+    <string name="diag_ok">OK</string>
+    <string name="diag_sem_conexao">SEM CONEXÃO (o sistema não validou a internet deste aparelho)</string>
+    <string name="diag_internet">Conexão de internet: %1$s</string>
+    <string name="diag_gms">Google Play Services: %1$s</string>
+    <string name="gms_ausente">AUSENTE (sem ele nenhum anúncio consegue carregar em aplicativo algum)</string>
+    <string name="gms_desatualizado">DESATUALIZADO (atualize o aplicativo Google Play Services na Google Play Store)</string>
+    <string name="gms_desativado">DESATIVADO</string>
+    <string name="gms_invalido">COM PROBLEMA</string>
+    <string name="diag_erros">Últimos erros de carregamento:\n%1$s</string>
+    <string name="diag_nenhum_erro">nenhum até agora</string>
+    <string name="diag_dica">Se tudo acima estiver OK e os anúncios ainda não carregarem, verifique: (1) se existe algum aplicativo bloqueador de anúncios ou VPN ativo (AdGuard, Blokada e semelhantes), pois desativar o DNS privado não desativa esses aplicativos; (2) se o DNS privado está como Automático ou Desativado; (3) se a data e a hora do celular estão corretas; (4) em celulares Xiaomi, Redmi e POCO, em Configurações > Aplicativos > Game Ads > Restringir dados, se o uso de Wi-Fi e de dados móveis está permitido.</string>
+
+    <!-- Avisos -->
     <string name="dns_titulo">Anúncios bloqueados pelo DNS privado</string>
     <string name="dns_mensagem">Os anúncios não estão carregando porque o DNS privado do Android (AdGuard, NextDNS ou semelhante) bloqueia os servidores de anúncios do Google em todo o sistema. Esse bloqueio é aplicado pelo próprio Android e nenhum aplicativo pode desativá-lo.\n\nPara os anúncios aparecerem, utilize uma das opções:\n\n1. No painel do seu serviço de DNS, permita os domínios: doubleclick.net, pagead2.googleapis.com, googleadservices.com e adservice.google.com.\n\n2. Troque o DNS privado por um que não bloqueia anúncios: Configurações > Rede e Internet > DNS privado > Nome do host do provedor, informando dns.google.\n\n3. Ou defina o DNS privado como Automático ou Desativado.</string>
+    <string name="gms_titulo">Problema com o Google Play Services</string>
+    <string name="gms_mensagem">Os anúncios falharam com erro interno. O Google Play Services é o componente do Android responsável por exibir anúncios, e sem ele nenhum anúncio carrega em aplicativo algum.\n\nVerifique se ele está presente no celular (Configurações > Aplicativos > Google Play Services) e se está atualizado na Google Play Store.\n\nUse o botão DIAGNÓSTICO para ver o estado atual dele.</string>
 </resources>

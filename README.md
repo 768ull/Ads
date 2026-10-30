@@ -12,7 +12,8 @@ Aplicativo Android dedicado exclusivamente à exibição de anúncios de jogos d
 - Menu de categorias (botão "CATEGORIAS"): "Todos os anúncios", "Vídeos com gameplay" (anúncios em vídeo que normalmente mostram trechos reais da jogabilidade) e "Intersticiais (pop-up)".
 - Banner fixo na parte inferior, que se atualiza automaticamente.
 - Pop-ups automáticos (intersticiais) a cada 2 minutos, com interruptor para ativar e desativar.
-- Detecção automática de bloqueio de anúncios por DNS privado, com orientação na própria tela.
+- Botão "DIAGNÓSTICO": mostra na tela o estado da conexão de internet, do Google Play Services e os códigos de erro reais do carregamento dos anúncios.
+- Detecção automática de falhas de rede e de erro interno, com orientação na própria tela.
 - Bloqueio de conteúdo adulto e de jogos de azar (veja a seção "Bloqueio de conteúdo").
 
 ## Gerar o instalador (APK) automaticamente pelo GitHub
@@ -57,11 +58,24 @@ O projeto já vem configurado com os IDs de TESTE oficiais do Google, que exibem
 | app/src/main/java/com/gameads/app/AdConfig.kt | ID do intersticial e do recompensado |
 | app/src/main/res/layout/activity_main.xml | ID do banner |
 
-## Bloqueio de conteúdo
+## Solução de problemas: os anúncios não aparecem
 
-- O código já define a classificação máxima de conteúdo como "G" (público geral) no arquivo GameAdsApp.kt. Isso bloqueia anúncios impróprios, incluindo a maioria dos anúncios de jogos de azar e apostas.
-- No console do AdMob, em "Controles de bloqueio", é possível bloquear as categorias de apostas e jogos de azar para garantir o bloqueio total.
-- Observação: o AdMob não possui um filtro exato de "somente jogos"; não é possível impedir por código que apareça ocasionalmente algum anúncio de aplicativo. No console do AdMob, a categoria de anúncios de aplicativos também pode ser restringida.
+O botão "DIAGNÓSTICO" do aplicativo mostra na tela o estado da conexão de internet, do Google Play Services e os códigos de erro reais do carregamento dos anúncios. Ele é a primeira ferramenta para descobrir o motivo. As causas mais comuns são:
+
+1. Google Play Services ausente ou desatualizado: é o componente do Android responsável por exibir anúncios, e sem ele nenhum anúncio carrega em aplicativo algum. Verifique em Configurações > Aplicativos e atualize-o na Google Play Store.
+2. Aplicativo bloqueador de anúncios ou VPN ativo (AdGuard, Blokada e semelhantes): desativar o DNS privado não desativa esses aplicativos. Encerre-os para testar.
+3. DNS privado bloqueando anúncios (veja a seção abaixo).
+4. Data e hora incorretas no celular: impedem as conexões seguras dos servidores de anúncios.
+5. Restrição de dados por aplicativo (comum em celulares Xiaomi, Redmi e POCO): em Configurações > Aplicativos > Game Ads, permita o uso de Wi-Fi e de dados móveis.
+
+Códigos de erro do AdMob exibidos no diagnóstico:
+
+| Código | Significado | Causa provável |
+| --- | --- | --- |
+| 0 | Erro interno | Google Play Services ausente ou desatualizado |
+| 1 | Solicitação inválida | Problema de configuração dos IDs (não é o caso dos IDs de teste) |
+| 2 | Erro de rede | Bloqueio de DNS, VPN bloqueadora ou restrição de dados do aplicativo |
+| 3 | Sem preenchimento | Nenhum anúncio disponível no momento (normal e temporário) |
 
 ## DNS privado e bloqueadores de anúncios do sistema
 
@@ -74,6 +88,12 @@ Para que os anúncios apareçam sem desativar o DNS privado, utilize uma das op�
 3. Ou defina o DNS privado como "Automático" ou "Desativado".
 
 O aplicativo detecta automaticamente quando os anúncios não carregam por provável bloqueio de DNS e exibe na própria tela um aviso com essas instruções.
+
+## Bloqueio de conteúdo
+
+- O código já define a classificação máxima de conteúdo como "G" (público geral) no arquivo GameAdsApp.kt. Isso bloqueia anúncios impróprios, incluindo a maioria dos anúncios de jogos de azar e apostas.
+- No console do AdMob, em "Controles de bloqueio", é possível bloquear as categorias de apostas e jogos de azar para garantir o bloqueio total.
+- Observação: o AdMob não possui um filtro exato de "somente jogos"; não é possível impedir por código que apareça ocasionalmente algum anúncio de aplicativo. No console do AdMob, a categoria de anúncios de aplicativos também pode ser restringida.
 
 ## Sobre as categorias de anúncios
 
@@ -107,7 +127,7 @@ GameAds/
 │       ├── java/com/gameads/app/
 │       │   ├── AdConfig.kt        (IDs das unidades de anúncio)
 │       │   ├── GameAdsApp.kt      (inicialização e bloqueio de conteúdo "G")
-│       │   └── MainActivity.kt    (tela principal, loop de anúncios e menu)
+│       │   └── MainActivity.kt    (tela principal, loop de anúncios e diagnóstico)
 │       └── res/
 │           ├── drawable/          (ícone vetorial e fundos dos botões)
 │           ├── layout/            (tela principal)

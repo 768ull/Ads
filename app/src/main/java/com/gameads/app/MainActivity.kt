@@ -1,5 +1,8 @@
 package com.gameads.app
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
@@ -23,6 +26,8 @@ import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
 import kotlin.random.Random
 
 /**
@@ -34,6 +39,8 @@ import kotlin.random.Random
  * - Cada anúncio fechado (ou concluído) abre automaticamente o próximo,
  *   com uma contagem entre um anúncio e outro e um botão para sair do loop.
  * - O menu de categorias troca o formato dos anúncios exibidos.
+ * - O botão DIAGNÓSTICO mostra o estado da conexão, do Google Play Services
+ *   e os códigos de erro reais do carregamento dos anúncios.
  */
 class MainActivity : AppCompatActivity() {
 
@@ -53,6 +60,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var txtProximo: TextView
     private lateinit var btnVerAnuncio: Button
     private lateinit var btnCategorias: Button
+    private lateinit var btnDiagnostico: Button
     private lateinit var btnSair: Button
     private lateinit var swPopups: SwitchCompat
 
@@ -66,8 +74,12 @@ class MainActivity : AppCompatActivity() {
     private var rewardedAd: RewardedAd? = null
     private var loadingRewarded = false
 
-    private var falhasDeCarregamento = 0
+    private var falhasDeRede = 0
+    private var falhasInternas = 0
     private var avisoDnsExibido = false
+    private var avisoGmsExibido = false
+    private var ultimoErroInterstitial = ""
+    private var ultimoErroRecompensado = ""
 
     private var countdownTimer: CountDownTimer? = null
     private val mainHandler = Handler(Looper.getMainLooper())
@@ -129,11 +141,13 @@ class MainActivity : AppCompatActivity() {
         txtProximo = findViewById(R.id.txtProximo)
         btnVerAnuncio = findViewById(R.id.btnVerAnuncio)
         btnCategorias = findViewById(R.id.btnCategorias)
+        btnDiagnostico = findViewById(R.id.btnDiagnostico)
         btnSair = findViewById(R.id.btnSair)
         swPopups = findViewById(R.id.swPopups)
 
         btnVerAnuncio.setOnClickListener { iniciarLoopDeAnuncios() }
         btnCategorias.setOnClickListener { mostrarDialogoDeCategorias() }
+        btnDiagnostico.setOnClickListener { mostrarDiagnostico() }
         btnSair.setOnClickListener { pararLoopDeAnuncios() }
         swPopups.setOnCheckedChangeListener { _, isChecked -> autoPopups = isChecked }
 
@@ -207,7 +221,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     // ---------------------------------------------------------------------
-    // Carregamento dos anúncios
+    // Carregamento dos anúncios e falhas
     // ---------------------------------------------------------------------
 
     private fun loadInterstitial() {
@@ -233,7 +247,7 @@ class MainActivity : AppCompatActivity() {
                 override fun onAdFailedToLoad(error: LoadAdError) {
                     loadingInterstitial = false
                     interstitialAd = null
-                    verificarBloqueioDeDns(error.code)
+                    tratarFalhaDeCarregamento("Intersticial", error)
                 }
             }
         )
@@ -256,39 +270,97 @@ class MainActivity : AppCompatActivity() {
                 override fun onAdFailedToLoad(error: LoadAdError) {
                     loadingRewarded = false
                     rewardedAd = null
-                    verificarBloqueioDeDns(error.code)
+                    tratarFalhaDeCarregamento("Recompensado", error)
                 }
             }
         )
     }
 
-    // ---------------------------------------------------------------------
-    // Detecção de bloqueio por DNS privado
-    // ---------------------------------------------------------------------
-
     /**
-     * Detecta quando os anúncios não carregam por provável bloqueio de DNS:
-     * o DNS privado do Android (Configurações > Rede e Internet > DNS privado),
-     * quando configurado com um serviço que bloqueia anúncios (AdGuard,
-     * NextDNS ou semelhante), impede o carregamento em qualquer aplicativo.
-     * O bloqueio é aplicado pelo próprio sistema operacional e nenhum
-     * aplicativo pode desativá-lo; por isso o aplicativo apenas orienta
-     * o usuário com as formas de liberar os anúncios.
+     * Registra a falha e orienta conforme o tipo de erro:
+     * - código 2 (rede): provável bloqueio de DNS privado, VPN bloqueadora
+     *   de anúncios ou restrição de dados do aplicativo;
+     * - código 0 (erro interno): provável problema com o Google Play Services.
+     * Em ambos os casos o bloqueio é aplicado fora do aplicativo; nenhum
+     * aplicativo pode desativá-lo, por isso o aviso apenas orienta o usuário.
      */
-    private fun verificarBloqueioDeDns(codigoDoErro: Int) {
-        if (avisoDnsExibido) return
-        // 0 = erro interno, 2 = erro de rede: falhas típicas de bloqueio por DNS.
-        if (codigoDoErro == 0 || codigoDoErro == 2) {
-            falhasDeCarregamento++
-            if (falhasDeCarregamento >= 2) mostrarAvisoDeDns()
+    private fun tratarFalhaDeCarregamento(formato: String, error: LoadAdError) {
+        val detalhe = formato + ": código " + error.code + " (" + error.message + ")"
+        if (formato == "Intersticial") ultimoErroInterstitial = detalhe
+        else ultimoErroRecompensado = detalhe
+
+        when (error.code) {
+            0 -> {
+                falhasInternas++
+                if (falhasInternas >= 2 && !avisoGmsExibido) {
+                    avisoGmsExibido = true
+                    mostrarAvisoGms()
+                }
+            }
+            2 -> {
+                falhasDeRede++
+                if (falhasDeRede >= 3 && !avisoDnsExibido) {
+                    avisoDnsExibido = true
+                    mostrarAvisoDeDns()
+                }
+            }
         }
     }
 
     private fun mostrarAvisoDeDns() {
-        avisoDnsExibido = true
         AlertDialog.Builder(this)
             .setTitle(getString(R.string.dns_titulo))
             .setMessage(getString(R.string.dns_mensagem))
+            .setPositiveButton(android.R.string.ok, null)
+            .show()
+    }
+
+    private fun mostrarAvisoGms() {
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.gms_titulo))
+            .setMessage(getString(R.string.gms_mensagem))
+            .setPositiveButton(android.R.string.ok, null)
+            .show()
+    }
+
+    // ---------------------------------------------------------------------
+    // Diagnóstico
+    // ---------------------------------------------------------------------
+
+    private fun mostrarDiagnostico() {
+        val cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val caps = cm.getNetworkCapabilities(cm.activeNetwork)
+        val statusInternet =
+            if (caps != null &&
+                caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
+                caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+            ) getString(R.string.diag_ok)
+            else getString(R.string.diag_sem_conexao)
+
+        val statusGms = when (GoogleApiAvailability.getInstance()
+            .isGooglePlayServicesAvailable(this)) {
+            ConnectionResult.SUCCESS -> getString(R.string.diag_ok)
+            ConnectionResult.SERVICE_MISSING -> getString(R.string.gms_ausente)
+            ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED -> getString(R.string.gms_desatualizado)
+            ConnectionResult.SERVICE_DISABLED -> getString(R.string.gms_desativado)
+            else -> getString(R.string.gms_invalido)
+        }
+
+        val erros = mutableListOf<String>()
+        if (ultimoErroInterstitial.isNotEmpty()) erros.add(ultimoErroInterstitial)
+        if (ultimoErroRecompensado.isNotEmpty()) erros.add(ultimoErroRecompensado)
+        val textoErros =
+            if (erros.isEmpty()) getString(R.string.diag_nenhum_erro)
+            else erros.joinToString("\n")
+
+        val msg = getString(R.string.diag_internet, statusInternet) + "\n\n" +
+            getString(R.string.diag_gms, statusGms) + "\n\n" +
+            getString(R.string.diag_erros, textoErros) + "\n\n" +
+            getString(R.string.diag_dica)
+
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.diag_titulo))
+            .setMessage(msg)
             .setPositiveButton(android.R.string.ok, null)
             .show()
     }

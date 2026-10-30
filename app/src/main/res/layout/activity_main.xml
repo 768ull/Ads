@@ -60,6 +60,18 @@
                 android:text="@string/btn_categorias"
                 android:textColor="@color/amarelo"
                 android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnDiagnostico"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/btn_retangulo"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:text="@string/diag_botao"
+                android:textColor="@color/amarelo"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <com.google.android.gms.ads.AdView
