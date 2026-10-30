@@ -14,7 +14,19 @@ Aplicativo Android dedicado exclusivamente à exibição de anúncios de jogos d
 - Pop-ups automáticos (intersticiais) a cada 2 minutos, com interruptor para ativar e desativar.
 - Bloqueio de conteúdo adulto e de jogos de azar (veja a seção "Bloqueio de conteúdo").
 
-## Como compilar
+## Gerar o instalador (APK) automaticamente pelo GitHub
+
+O repositório inclui uma GitHub Action (arquivo .github/workflows/android-apk.yml) que compila o APK automaticamente nos servidores do GitHub. Não é preciso instalar nada no computador.
+
+1. Abra o repositório no GitHub e acesse a aba Actions.
+2. A compilação inicia sozinha a cada novo envio para a branch main. Para executar manualmente, selecione o fluxo de trabalho "Construir APK do Game Ads" e clique em "Run workflow".
+3. Aguarde a conclusão (normalmente de 5 a 10 minutos no primeiro envio).
+4. Clique na execução concluída e baixe o artefato "GameAds-APK".
+5. O arquivo baixado é um ZIP; extraia o APK (app-debug.apk) e instale-o no celular (será necessário permitir a instalação de aplicativos de fontes desconhecidas).
+
+O APK gerado é a variante debug, que já vem assinada e pode ser instalada diretamente em qualquer Android 8.0 ou superior.
+
+## Como compilar no computador (opcional)
 
 1. Instale o Android Studio (com JDK 17) em https://developer.android.com/studio
 2. Abra esta pasta como projeto (File > Open).
@@ -71,6 +83,9 @@ Nenhuma rede de anúncios (inclusive o AdMob) permite escolher entre "anúncios 
 
 ```
 GameAds/
+├── .github/
+│   └── workflows/
+│       └── android-apk.yml    (compilação automática do APK no GitHub)
 ├── app/
 │   ├── build.gradle
 │   ├── proguard-rules.pro
