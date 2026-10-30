@@ -66,6 +66,9 @@ class MainActivity : AppCompatActivity() {
     private var rewardedAd: RewardedAd? = null
     private var loadingRewarded = false
 
+    private var falhasDeCarregamento = 0
+    private var avisoDnsExibido = false
+
     private var countdownTimer: CountDownTimer? = null
     private val mainHandler = Handler(Looper.getMainLooper())
     private val popupHandler = Handler(Looper.getMainLooper())
@@ -230,6 +233,7 @@ class MainActivity : AppCompatActivity() {
                 override fun onAdFailedToLoad(error: LoadAdError) {
                     loadingInterstitial = false
                     interstitialAd = null
+                    verificarBloqueioDeDns(error.code)
                 }
             }
         )
@@ -252,9 +256,41 @@ class MainActivity : AppCompatActivity() {
                 override fun onAdFailedToLoad(error: LoadAdError) {
                     loadingRewarded = false
                     rewardedAd = null
+                    verificarBloqueioDeDns(error.code)
                 }
             }
         )
+    }
+
+    // ---------------------------------------------------------------------
+    // Detecção de bloqueio por DNS privado
+    // ---------------------------------------------------------------------
+
+    /**
+     * Detecta quando os anúncios não carregam por provável bloqueio de DNS:
+     * o DNS privado do Android (Configurações > Rede e Internet > DNS privado),
+     * quando configurado com um serviço que bloqueia anúncios (AdGuard,
+     * NextDNS ou semelhante), impede o carregamento em qualquer aplicativo.
+     * O bloqueio é aplicado pelo próprio sistema operacional e nenhum
+     * aplicativo pode desativá-lo; por isso o aplicativo apenas orienta
+     * o usuário com as formas de liberar os anúncios.
+     */
+    private fun verificarBloqueioDeDns(codigoDoErro: Int) {
+        if (avisoDnsExibido) return
+        // 0 = erro interno, 2 = erro de rede: falhas típicas de bloqueio por DNS.
+        if (codigoDoErro == 0 || codigoDoErro == 2) {
+            falhasDeCarregamento++
+            if (falhasDeCarregamento >= 2) mostrarAvisoDeDns()
+        }
+    }
+
+    private fun mostrarAvisoDeDns() {
+        avisoDnsExibido = true
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.dns_titulo))
+            .setMessage(getString(R.string.dns_mensagem))
+            .setPositiveButton(android.R.string.ok, null)
+            .show()
     }
 
     // ---------------------------------------------------------------------

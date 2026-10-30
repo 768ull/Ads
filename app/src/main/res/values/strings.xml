@@ -10,4 +10,6 @@
     <string name="proximo_anuncio">Próximo anúncio em %1$d s…</string>
     <string name="sair_dos_anuncios">SAIR DOS ANÚNCIOS</string>
     <string name="categoria_titulo">Categoria de anúncios</string>
+    <string name="dns_titulo">Anúncios bloqueados pelo DNS privado</string>
+    <string name="dns_mensagem">Os anúncios não estão carregando porque o DNS privado do Android (AdGuard, NextDNS ou semelhante) bloqueia os servidores de anúncios do Google em todo o sistema. Esse bloqueio é aplicado pelo próprio Android e nenhum aplicativo pode desativá-lo.\n\nPara os anúncios aparecerem, utilize uma das opções:\n\n1. No painel do seu serviço de DNS, permita os domínios: doubleclick.net, pagead2.googleapis.com, googleadservices.com e adservice.google.com.\n\n2. Troque o DNS privado por um que não bloqueia anúncios: Configurações > Rede e Internet > DNS privado > Nome do host do provedor, informando dns.google.\n\n3. Ou defina o DNS privado como Automático ou Desativado.</string>
 </resources>

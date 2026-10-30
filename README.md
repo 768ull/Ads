@@ -12,6 +12,7 @@ Aplicativo Android dedicado exclusivamente à exibição de anúncios de jogos d
 - Menu de categorias (botão "CATEGORIAS"): "Todos os anúncios", "Vídeos com gameplay" (anúncios em vídeo que normalmente mostram trechos reais da jogabilidade) e "Intersticiais (pop-up)".
 - Banner fixo na parte inferior, que se atualiza automaticamente.
 - Pop-ups automáticos (intersticiais) a cada 2 minutos, com interruptor para ativar e desativar.
+- Detecção automática de bloqueio de anúncios por DNS privado, com orientação na própria tela.
 - Bloqueio de conteúdo adulto e de jogos de azar (veja a seção "Bloqueio de conteúdo").
 
 ## Gerar o instalador (APK) automaticamente pelo GitHub
@@ -61,6 +62,18 @@ O projeto já vem configurado com os IDs de TESTE oficiais do Google, que exibem
 - O código já define a classificação máxima de conteúdo como "G" (público geral) no arquivo GameAdsApp.kt. Isso bloqueia anúncios impróprios, incluindo a maioria dos anúncios de jogos de azar e apostas.
 - No console do AdMob, em "Controles de bloqueio", é possível bloquear as categorias de apostas e jogos de azar para garantir o bloqueio total.
 - Observação: o AdMob não possui um filtro exato de "somente jogos"; não é possível impedir por código que apareça ocasionalmente algum anúncio de aplicativo. No console do AdMob, a categoria de anúncios de aplicativos também pode ser restringida.
+
+## DNS privado e bloqueadores de anúncios do sistema
+
+O recurso "DNS privado" do Android (Configurações > Rede e Internet > DNS privado), quando configurado com um serviço que bloqueia anúncios (como AdGuard ou NextDNS), impede que os anúncios carreguem em qualquer aplicativo. Esse bloqueio é aplicado pelo próprio sistema operacional a todas as conexões e nenhum aplicativo pode desativá-lo ou contorná-lo; não é possível "bloquear o DNS privado por dentro do aplicativo".
+
+Para que os anúncios apareçam sem desativar o DNS privado, utilize uma das opções:
+
+1. Permita os domínios de anúncios do Google no painel do seu serviço de DNS (por exemplo, no painel da NextDNS ou do AdGuard): doubleclick.net, pagead2.googleapis.com, googleadservices.com e adservice.google.com.
+2. Troque o hostname do DNS privado por um que não bloqueia anúncios, por exemplo dns.google (Configurações > Rede e Internet > DNS privado > Nome do host do provedor).
+3. Ou defina o DNS privado como "Automático" ou "Desativado".
+
+O aplicativo detecta automaticamente quando os anúncios não carregam por provável bloqueio de DNS e exibe na própria tela um aviso com essas instruções.
 
 ## Sobre as categorias de anúncios
 
